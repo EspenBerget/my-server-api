@@ -29,5 +29,6 @@ export function getAllEvents() {
     return db.query("SELECT * FROM events");
 }
 
-// Close db
-db.close();
+export function closeDB() {
+    db.close();
+}

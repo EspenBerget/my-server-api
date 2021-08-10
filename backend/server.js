@@ -16,7 +16,6 @@ export class Server {
         }
     }
 
-    // find the appropriate handle given a url and method
     run(req) {
         let methods = this.routes.get(req.url);
         if (methods === undefined) {
