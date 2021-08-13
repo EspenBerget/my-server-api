@@ -33,30 +33,36 @@ export class Server {
     }
 
     // Handlers
-    handle(url, handle, method) {
+    handle(url, handles, method) {
         let methods = this.routes.get(url);
 
         if (methods === undefined) {
             methods = new Map();
         }
         
-        methods.set(method, handle);
+
+        methods.set(method, async req => {
+            for (const h of handles) {
+                await h(req);
+            }
+        });
+
         this.routes.set(url, methods);
     }
 
-    get(url, handle) {
-        this.handle(url, handle, "GET");
+    get(url, ...handles) {
+        this.handle(url, handles, "GET");
     }
 
-    post(url, handle) {
-        this.handle(url, handle, "POST");
+    post(url, ...handles) {
+        this.handle(url, handles, "POST");
     }
     
-    update(url, handle) {
-        this.handle(url, handle, "UPDATE");
+    update(url, ...handles) {
+        this.handle(url, handles, "UPDATE");
     }
 
-    delete(url, handle) {
-        this.handle(url, handle, "DELETE");
+    delete(url, ...handles) {
+        this.handle(url, handles, "DELETE");
     }
 }

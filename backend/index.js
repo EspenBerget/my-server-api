@@ -1,21 +1,10 @@
 import { Server } from './server.js';
 import {addEvent, removeEvent, updateEvent, getAllEvents, closeDB} from './db.js';
+import {getJSON, checkJSON} from './middleware.js';
 
-const decoder = new TextDecoder();
-function getJSON(buf) {
-    const json = buf.then(b => 
-        JSON.parse(decoder.decode(b))
-    );
-    return json;
-}
-
-async function processBuffer(readBuffer) {
-    let buf = new Uint8Array(4096);
-    const n = await readBuffer.read(buf);
-    return buf.slice(0, n);
-}
 
 const server = new Server(8001);
+
 
 server.get('/', req => {
     req.respond({body: "hello world"});
@@ -26,18 +15,25 @@ server.get('/events/all', req => {
     req.respond({body: JSON.stringify(events)});
 });
 
-server.post("/events/new", req => {
-    let buf = processBuffer(req.r);
-    getJSON(buf).then(json => {
-        addEvent(json.desc);
-    });
-    req.respond({
-        body: JSON.stringify({reply: "adding event"})
-    });
-});
+server.post("/events/new", 
+    getJSON,
+    checkJSON({desc: "string"}),
+    req => {
+        if (req.jsonErrors === "") {
+            addEvent(req.json.desc);
+            req.respond({
+                body: JSON.stringify({status: "ok"})
+            });
+        } else {
+            req.respond({
+                body: JSON.stringify({status: req.jsonErrors})
+            });
+        }
+    }
+);
 
-// server.delete('/events/:id', TODO);
-// server.get("/events/:id", TODO);
+// server.delete('/events/delete', TODO);
+// server.get("/events/get", TODO);
 
 await server.listen();
 
