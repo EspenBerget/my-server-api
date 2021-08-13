@@ -1,9 +1,9 @@
 import { Server } from './server.js';
-import {addEvent, removeEvent, updateEvent, getAllEvents, closeDB} from './db.js';
-import {getJSON, checkJSON} from './middleware.js';
+import {addEvent, removeEvent, updateEvent, getEvent, getAllEvents, closeDB} from './db.js';
+import {getJSON, checkJSON, getQuery} from './middleware.js';
 
 
-const server = new Server(8001);
+const server = new Server(8001, true);
 
 
 server.get('/', req => {
@@ -32,8 +32,30 @@ server.post("/events/new",
     }
 );
 
-// server.delete('/events/delete', TODO);
-// server.get("/events/get", TODO);
+server.get("/events/get", 
+    getQuery,
+    req => {
+        if (req.query.id !== undefined) {
+            const event = getEvent(req.query.id);
+            req.respond({body: JSON.stringify({event})});
+        } else {
+            req.respond({body: JSON.stringify({event: null})});
+        }
+    }
+);
+
+
+server.delete('/events/delete', 
+    getQuery,
+    req => {
+       if (req.query.id !== undefined) {
+           removeEvent(req.query.id);
+           req.respond({body: JSON.stringify({status: "deleted"})});
+       } else {
+           req.respond({body: JSON.stringify({status: "not found"})});
+       }
+    }
+);
 
 await server.listen();
 

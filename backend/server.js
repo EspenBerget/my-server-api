@@ -1,12 +1,20 @@
 import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 
 export class Server {
-    constructor(port) {
+    constructor(port, loggingOn = false) {
         this.port = port;
         this.server = serve({ port });
         this.routes = new Map();
         // routes is a object of objects.
         // url -> (method -> handle)
+
+        this.loggingOn = loggingOn;
+    }
+
+    log(req) {
+        if (this.loggingOn) {
+            console.log(`got ${req.method} request on ${req.url}`);
+        }
     }
 
     async listen() {
@@ -17,7 +25,11 @@ export class Server {
     }
 
     run(req) {
-        let methods = this.routes.get(req.url);
+        this.log(req);
+        // this localhost stuff is a hack but it will work fine, and give us the 
+        // needed functionality from the URL class.
+        let url = new URL("https://localhost" + req.url);
+        let methods = this.routes.get(url.pathname);
         if (methods === undefined) {
             req.respond({ status: 404, body: "Not Found" });
             return;

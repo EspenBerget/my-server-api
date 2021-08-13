@@ -1,3 +1,4 @@
+// JSON
 export async function getJSON(req) {
     let buf = await Deno.readAll(req.body);
     req.json = JSON.parse(new TextDecoder().decode(buf));
@@ -18,5 +19,18 @@ export function checkJSON(correct) {
                 }
             }
         } 
+    }
+}
+
+// QUERY
+export function getQuery(req) {
+    req.query = {};
+
+    // this localhost stuff is a hack but it will work fine, and give us the 
+    // needed functionality from the URL class.
+    let url = new URL("https://localhost" + req.url);
+
+    for (const k of url.searchParams.keys()) {
+        req.query[k] = url.searchParams.get(k);
     }
 }

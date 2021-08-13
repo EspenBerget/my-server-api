@@ -25,6 +25,10 @@ export function updateEvent(id, text) {
     db.query("UPDATE events SET desc = ? WHERE (id == ?)", [text, id]);
 }
 
+export function getEvent(id) {
+    return db.query("SELECT * FROM events WHERE (id == ?)", [id]);
+}
+
 export function getAllEvents() {
     return db.query("SELECT * FROM events");
 }
