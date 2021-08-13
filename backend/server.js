@@ -13,7 +13,7 @@ export class Server {
 
     log(req) {
         if (this.loggingOn) {
-            console.log(`got ${req.method} request on ${req.url}`);
+            console.log(`server: got ${req.method} request on ${req.url}`);
         }
     }
 

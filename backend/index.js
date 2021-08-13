@@ -15,7 +15,7 @@ server.get('/events/all', req => {
     req.respond({body: JSON.stringify(events)});
 });
 
-server.post("/events/new", 
+server.post('/events/new', 
     getJSON,
     checkJSON({desc: "string"}),
     req => {
@@ -32,14 +32,14 @@ server.post("/events/new",
     }
 );
 
-server.get("/events/get", 
+server.get('/events/get', 
     getQuery,
     req => {
         if (req.query.id !== undefined) {
             const event = getEvent(req.query.id);
             req.respond({body: JSON.stringify({event})});
         } else {
-            req.respond({body: JSON.stringify({event: null})});
+            req.respond({body: JSON.stringify({status: "query param 'id' is missing"})});
         }
     }
 );
@@ -52,8 +52,26 @@ server.delete('/events/delete',
            removeEvent(req.query.id);
            req.respond({body: JSON.stringify({status: "deleted"})});
        } else {
-           req.respond({body: JSON.stringify({status: "not found"})});
+           req.respond({body: JSON.stringify({status: "query param 'id' is missing"})});
        }
+    }
+);
+
+server.update('/events/update', 
+    getQuery,
+    getJSON,
+    checkJSON({desc: "string"}),
+    req => {
+        if (req.query.id !== undefined) {
+            if (req.jsonErrors === "") {
+                updateEvent(req.query.id, req.json.desc);
+                req.respond({body: JSON.stringify({status: "updated"})});
+            } else {
+                req.respond({body: JSON.stringify({status: req.jsonErrors})});
+            }
+        } else {
+            req.respond({body: JSON.stringify({status: "query param 'id' is missing"})})
+        }
     }
 );
 
