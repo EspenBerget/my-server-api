@@ -90,8 +90,8 @@ export class Server {
         this.handle(url, handles, "POST");
     }
     
-    update(url, ...handles) {
-        this.handle(url, handles, "UPDATE");
+    patch(url, ...handles) {
+        this.handle(url, handles, "PATCH");
     }
 
     delete(url, ...handles) {

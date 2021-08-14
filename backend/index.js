@@ -54,7 +54,7 @@ server.delete('/event',
     }
 );
 
-server.update('/event', 
+server.patch('/event', 
     getQuery,
     getJSON,
     checkJSON({desc: "string"}),
@@ -62,8 +62,7 @@ server.update('/event',
         if (req.query.id !== undefined) {
             if (req.jsonErrors === "") {
                 updateEvent(req.query.id, req.json.desc);
-                req.respond({body: JSON.stringify({status: "updated"})});
-                respondWithJSON(req, {status: "updated"});
+                respondWithJSON(req, {status: "patched"});
             } else {
                 respondWithJSON(req, {status: req.jsonErrors});
             }
