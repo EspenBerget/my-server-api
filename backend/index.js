@@ -1,7 +1,8 @@
-import { Server } from './server.js';
+import { Server, respondWithJSON } from './server.js';
 import {addEvent, removeEvent, updateEvent, getEvent, getAllEvents, closeDB} from './db.js';
 import {getJSON, checkJSON, getQuery} from './middleware.js';
 
+// TODO: security! request can break the server!!
 
 const server = new Server(8001, true);
 
@@ -10,54 +11,50 @@ server.get('/', req => {
     req.respond({body: "hello world"});
 });
 
-server.get('/events/all', req => {
+server.get('/events', req => {
     const events = getAllEvents();
-    req.respond({body: JSON.stringify(events)});
+    respondWithJSON(req, events);
 });
 
-server.post('/events/new', 
+server.post('/event/new', 
     getJSON,
     checkJSON({desc: "string"}),
     req => {
         if (req.jsonErrors === "") {
             addEvent(req.json.desc);
-            req.respond({
-                body: JSON.stringify({status: "ok"})
-            });
+            respondWithJSON(req, {status: "ok"});
         } else {
-            req.respond({
-                body: JSON.stringify({status: req.jsonErrors})
-            });
+            respondWithJSON(req, {status: req.jsonErrors});
         }
     }
 );
 
-server.get('/events/get', 
+server.get('/event', 
     getQuery,
     req => {
         if (req.query.id !== undefined) {
             const event = getEvent(req.query.id);
-            req.respond({body: JSON.stringify({event})});
+            respondWithJSON(req, {event});
         } else {
-            req.respond({body: JSON.stringify({status: "query param 'id' is missing"})});
+            respondWithJSON(req, {status: "query param 'id' is missing"});
         }
     }
 );
 
 
-server.delete('/events/delete', 
+server.delete('/event', 
     getQuery,
     req => {
        if (req.query.id !== undefined) {
            removeEvent(req.query.id);
-           req.respond({body: JSON.stringify({status: "deleted"})});
+           respondWithJSON(req, {status: "deleted"});
        } else {
-           req.respond({body: JSON.stringify({status: "query param 'id' is missing"})});
+           respondWithJSON(req, {status: "query param 'id' is missing"});
        }
     }
 );
 
-server.update('/events/update', 
+server.update('/event', 
     getQuery,
     getJSON,
     checkJSON({desc: "string"}),
@@ -66,11 +63,12 @@ server.update('/events/update',
             if (req.jsonErrors === "") {
                 updateEvent(req.query.id, req.json.desc);
                 req.respond({body: JSON.stringify({status: "updated"})});
+                respondWithJSON(req, {status: "updated"});
             } else {
-                req.respond({body: JSON.stringify({status: req.jsonErrors})});
+                respondWithJSON(req, {status: req.jsonErrors});
             }
         } else {
-            req.respond({body: JSON.stringify({status: "query param 'id' is missing"})})
+            respondWithJSON(req, {status: "query param 'id' is missing"});
         }
     }
 );

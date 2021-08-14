@@ -78,3 +78,9 @@ export class Server {
         this.handle(url, handles, "DELETE");
     }
 }
+
+const corsAll = new Headers({"Access-Control-Allow-Origin": "*"});
+
+export function respondWithJSON(req, obj, headers = corsAll) {
+    req.respond({body: JSON.stringify(obj), headers});
+}
