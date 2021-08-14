@@ -1,1 +1,6 @@
 backend/events.db
+
+frontend/node_modules/
+frontend/public/build/
+
+frontend/.DS_Store
