@@ -13,7 +13,12 @@ export class Server {
 
     log(req) {
         if (this.loggingOn) {
-            console.log(`server: got ${req.method} request on ${req.url}`);
+            console.log(`server: got %c${req.method}%c request on %c${req.url}%c from %c${req.headers.get("origin")}`,
+                "color: red",
+                "color: white",
+                "color: lightgreen",
+                "color: white",
+                "color: orange");
         }
     }
 
