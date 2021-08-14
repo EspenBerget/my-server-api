@@ -109,7 +109,8 @@ export function respondWithJSON(req, obj, headers = corsAll) {
 function makeOptionsHandler(methods) {
     return req => {
         req.respond({body: null, headers: new Headers({
-            'Allow': methods
+            'Access-Control-Allow-Methods': methods,
+            'Access-Control-Allow-Origin': '*'
         })});
     }
 }
