@@ -16,7 +16,7 @@ server.get('/events', req => {
     respondWithJSON(req, events);
 });
 
-server.post('/event/new', 
+server.post('/event', 
     getJSON,
     checkJSON({desc: "string"}),
     req => {
