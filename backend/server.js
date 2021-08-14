@@ -99,7 +99,9 @@ export class Server {
     }
 }
 
-const corsAll = new Headers({"Access-Control-Allow-Origin": "*"});
+const corsAll = new Headers({
+    "Access-Control-Allow-Origin": "*",
+});
 
 export function respondWithJSON(req, obj, headers = corsAll) {
     req.respond({body: JSON.stringify(obj), headers});
@@ -110,7 +112,8 @@ function makeOptionsHandler(methods) {
     return req => {
         req.respond({body: null, headers: new Headers({
             'Access-Control-Allow-Methods': methods,
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type'
         })});
     }
 }
