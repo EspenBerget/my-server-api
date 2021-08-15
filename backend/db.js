@@ -1,4 +1,4 @@
-import { DB } from "https://deno.land/x/sqlite/mod.ts";
+import { DB } from "https://deno.land/x/sqlite@v3.0.0/mod.ts";
 
 // Open database
 const db = new DB("events.db");
