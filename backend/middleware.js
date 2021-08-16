@@ -1,7 +1,11 @@
 // JSON
 export async function getJSON(req) {
     let buf = await Deno.readAll(req.body);
-    req.json = JSON.parse(new TextDecoder().decode(buf));
+    if (buf.length === 0) {
+        req.json = {};
+    } else {
+        req.json = JSON.parse(new TextDecoder().decode(buf));
+    }
     return Promise.resolve("done");
 }
 

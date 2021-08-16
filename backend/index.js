@@ -2,8 +2,6 @@ import { Server, respondWithJSON } from './server.js';
 import {addEvent, removeEvent, updateEvent, getEvent, getAllEvents, closeDB} from './db.js';
 import {getJSON, checkJSON, getQuery} from './middleware.js';
 
-// TODO: security! request can break the server!!
-
 const server = new Server(8001, true);
 
 
@@ -34,7 +32,7 @@ server.get('/event',
     req => {
         if (req.query.id !== undefined) {
             const event = getEvent(req.query.id);
-            respondWithJSON(req, {event});
+            respondWithJSON(req, event);
         } else {
             respondWithJSON(req, {status: "query param 'id' is missing"});
         }

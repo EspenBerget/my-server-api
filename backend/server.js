@@ -3,14 +3,15 @@ import { serve } from "https://deno.land/std@0.103.0/http/server.ts";
 export class Server {
     constructor(port, loggingOn = false) {
         this.port = port;
-        this.server = serve({ port });
-        this.routes = new Map();
-        // routes is a object of objects.
-        // url -> (method -> handle)
-
         this.loggingOn = loggingOn;
+
+        this.server = serve({ port });
+
+        // url -> (method -> handle)
+        this.routes = new Map();
     }
 
+    // Adds a reply to any option request for all urls
     addOption() {
         for (const methodMap of this.routes.values()) {
             let methods = "";
@@ -26,7 +27,7 @@ export class Server {
 
     log(req) {
         if (this.loggingOn) {
-            console.log(`server: got %c${req.method}%c request on %c${req.url}%c from %c${req.headers.get("origin")}`,
+            console.log(`server: got %c${req.method}%c request on %c${req.url}%c from %c${req.headers.get("user-agent")}`,
                 "color: red",
                 "color: white",
                 "color: lightgreen",
@@ -66,11 +67,12 @@ export class Server {
     }
 
     // Handlers
-    handle(url, handles, method) {
-        let methods = this.routes.get(url);
+    handle(route, handles, method) {
+        let methods = this.routes.get(route);
 
         if (methods === undefined) {
             methods = new Map();
+            this.routes.set(route, methods);
         }
 
         methods.set(method, async req => {
@@ -78,24 +80,22 @@ export class Server {
                 await h(req);
             }
         });
-
-        this.routes.set(url, methods);
     }
 
-    get(url, ...handles) {
-        this.handle(url, handles, "GET");
+    get(route, ...handles) {
+        this.handle(route, handles, "GET");
     }
 
-    post(url, ...handles) {
-        this.handle(url, handles, "POST");
+    post(route, ...handles) {
+        this.handle(route, handles, "POST");
     }
     
-    patch(url, ...handles) {
-        this.handle(url, handles, "PATCH");
+    patch(route, ...handles) {
+        this.handle(route, handles, "PATCH");
     }
 
-    delete(url, ...handles) {
-        this.handle(url, handles, "DELETE");
+    delete(route, ...handles) {
+        this.handle(route, handles, "DELETE");
     }
 }
 
