@@ -7,11 +7,11 @@ export class Server {
 
         this.server = serve({ port });
 
-        // url -> (method -> handle)
+        // route -> (method -> handler)
         this.routes = new Map();
     }
 
-    // Adds a reply to any option request for all urls
+    // Adds a reply to any option request for all routes
     addOption() {
         for (const methodMap of this.routes.values()) {
             let methods = "";
